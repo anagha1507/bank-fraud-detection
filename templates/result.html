@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Result</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .result-icon {
+            font-size: 5em;
+            margin-bottom: 10px;
+        }
+        
+        .result-status {
+            font-size: 2em;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .metric {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .metric-label {
+            font-size: 0.8em;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .shap-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .shap-section img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd6;
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+        }
+        
+        .impact-positive {
+            color: #dc3545;
+        }
+        
+        .impact-negative {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="result-card">
+            <div class="result-icon">
+                {{ '🚨' if result.is_fraud else '✅' }}
+            </div>
+            <div class="result-status" style="color: {{ result.risk_color }}">
+                {{ 'FRAUD DETECTED!' if result.is_fraud else 'NORMAL TRANSACTION' }}
+            </div>
+            <div class="risk-badge" style="background: {{ result.risk_color }}">
+                Risk Level: {{ result.risk_level }}
+            </div>
+            
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-label">Ensemble Score</div>
+                    <div class="metric-value">{{ "%.2f"|format(result.ensemble_score * 100) }}%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">XGBoost Probability</div>
+                    <div class="metric-value">{{ "%.2f"|format(result.xgboost_probability * 100) }}%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Autoencoder Score</div>
+                    <div class="metric-value">{{ "%.2f"|format(result.autoencoder_score) }}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Models Agree</div>
+                    <div class="metric-value">{{ '✅ Yes' if result.models_agree else '⚠️ No' }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-card">
+            <h2>🔮 SHAP Explanation</h2>
+            <p style="color: #888; margin-bottom: 15px;">Why did the model make this decision?</p>
+            
+            {% if shap_img %}
+            <div class="shap-section">
+                <img src="data:image/png;base64,{{ shap_img }}" alt="SHAP Explanation">
+            </div>
+            {% endif %}
+            
+            <div class="feature-list">
+                {% for feature in top_features %}
+                <div class="feature-item">
+                    <span class="feature-name">{{ feature.feature }}</span>
+                    <span class="{{ 'impact-positive' if feature.impact > 0 else 'impact-negative' }}">
+                        {{ '+' if feature.impact > 0 else '' }}{{ "%.4f"|format(feature.impact) }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/" class="btn">🔍 Check Another Transaction</a>
+        </div>
+    </div>
+</body>
+</html>

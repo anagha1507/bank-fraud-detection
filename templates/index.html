@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Fraud Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+        
+        .btn-detect {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-detect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-sample {
+            background: #f0f0f0;
+            color: #333;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        
+        .btn-sample:hover {
+            background: #e0e0e0;
+        }
+        
+        .sample-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .upload-section {
+            text-align: center;
+            padding: 40px;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            background: #f8f9ff;
+        }
+        
+        .upload-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .file-label:hover {
+            background: #5a6fd6;
+        }
+        
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Bank Fraud Detection</h1>
+            <p>AI-Powered Real-Time Fraud Detection System</p>
+            <div class="tech-badges">
+                <span class="badge">🤖 XGBoost</span>
+                <span class="badge">🔮 SHAP</span>
+                <span class="badge">🧠 Autoencoder</span>
+                <span class="badge">⚡ Cost-Sensitive</span>
+            </div>
+        </div>
+        
+        <!-- Single Transaction Check -->
+        <div class="card">
+            <h2>🔍 Check Single Transaction</h2>
+            <div class="sample-buttons">
+                <button class="btn btn-sample" onclick="loadSample('normal')">📋 Load Normal Sample</button>
+                <button class="btn btn-sample" onclick="loadSample('fraud')">🚨 Load Fraud Sample</button>
+            </div>
+            
+            <form action="/predict" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Transaction Type</label>
+                        <select name="type" id="type">
+                            <option value="PAYMENT">Payment</option>
+                            <option value="TRANSFER">Transfer</option>
+                            <option value="CASH_OUT">Cash Out</option>
+                            <option value="CASH_IN">Cash In</option>
+                            <option value="DEBIT">Debit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($)</label>
+                        <input type="number" name="amount" id="amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Origin Balance Before ($)</label>
+                        <input type="number" name="oldbalanceOrg" id="oldbalanceOrg" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Origin Balance After ($)</label>
+                        <input type="number" name="newbalanceOrig" id="newbalanceOrig" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Dest Balance Before ($)</label>
+                        <input type="number" name="oldbalanceDest" id="oldbalanceDest" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Dest Balance After ($)</label>
+                        <input type="number" name="newbalanceDest" id="newbalanceDest" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hour (0-23)</label>
+                        <input type="number" name="hour" id="hour" min="0" max="23" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Day of Week (0=Mon, 6=Sun)</label>
+                        <input type="number" name="day_of_week" id="day_of_week" min="0" max="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Age</label>
+                        <input type="number" name="age" id="age" min="18" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender" id="gender">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Txns in Last 24h</label>
+                        <input type="number" name="txn_count_24h" id="txn_count_24h" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Device</label>
+                        <select name="device" id="device">
+                            <option value="Web">Web</option>
+                            <option value="Mobile">Mobile</option>
+                            <option value="ATM">ATM</option>
+                            <option value="POS">POS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Distance from Home (km)</label>
+                        <input type="number" name="location_distance" id="location_distance" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Previous Frauds</label>
+                        <input type="number" name="previous_frauds" id="previous_frauds" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Age (days)</label>
+                        <input type="number" name="account_age_days" id="account_age_days" required>
+                    </div>
+                    <input type="hidden" name="step" value="1">
+                </div>
+                <button type="submit" class="btn btn-detect">🔍 Detect Fraud</button>
+            </form>
+        </div>
+        
+        <!-- Batch Upload -->
+        <div class="card">
+            <h2>📁 Batch Detection (CSV Upload)</h2>
+            <div class="upload-section">
+                <h3>📂 Upload CSV File with Transactions</h3>
+                <p style="color: #888; margin-bottom: 20px;">CSV must include: type, amount, oldbalanceOrg, newbalanceOrig, oldbalanceDest, newbalanceDest, hour, day_of_week, age, gender, txn_count_24h, device, location_distance, previous_frauds, account_age_days</p>
+                <form action="/api/batch" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" id="file" class="file-input" accept=".csv" onchange="this.form.submit()">
+                    <label for="file" class="file-label">📤 Choose CSV File</label>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function loadSample(type) {
+            fetch(`/sample/${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    for (const [key, value] of Object.entries(data)) {
+                        const element = document.getElementById(key);
+                        if (element) {
+                            element.value = value;
+                        }
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

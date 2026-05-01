@@ -1,0 +1,38 @@
+{
+  "xgboost_threshold": 0.8450242280960083,
+  "autoencoder_threshold": 0.38376201393021475,
+  "ensemble_weights": {
+    "xgboost": 0.6,
+    "autoencoder": 0.4
+  },
+  "feature_names": [
+    "step",
+    "type",
+    "amount",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "errorBalanceOrig",
+    "errorBalanceDest",
+    "hour",
+    "day_of_week",
+    "age",
+    "gender",
+    "txn_count_24h",
+    "device",
+    "location_distance",
+    "previous_frauds",
+    "account_age_days",
+    "balance_change_orig",
+    "balance_change_dest",
+    "amount_to_old_balance",
+    "amount_to_new_balance",
+    "balance_ratio",
+    "is_night",
+    "is_weekend",
+    "amount_log",
+    "high_amount",
+    "risk_score"
+  ]
+}

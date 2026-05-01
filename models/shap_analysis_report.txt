@@ -1,0 +1,53 @@
+================================================================================
+BANK FRAUD DETECTION - SHAP EXPLAINABILITY REPORT
+================================================================================
+
+1. MODEL OVERVIEW
+----------------------------------------
+Model Type: XGBoost Classifier
+Number of Features: 28
+Training Samples: 40,000
+Test Samples: 10,000
+
+2. TOP FEATURES BY SHAP IMPORTANCE
+----------------------------------------
+   1. errorBalanceOrig          | SHAP Importance: 0.0236
+   2. amount                    | SHAP Importance: 0.0007
+   3. type                      | SHAP Importance: 0.0000
+   4. step                      | SHAP Importance: 0.0000
+   5. oldbalanceOrg             | SHAP Importance: 0.0000
+   6. newbalanceOrig            | SHAP Importance: 0.0000
+   7. oldbalanceDest            | SHAP Importance: 0.0000
+   8. newbalanceDest            | SHAP Importance: 0.0000
+   9. errorBalanceDest          | SHAP Importance: 0.0000
+  10. hour                      | SHAP Importance: 0.0000
+  11. day_of_week               | SHAP Importance: 0.0000
+  12. age                       | SHAP Importance: 0.0000
+  13. gender                    | SHAP Importance: 0.0000
+  14. txn_count_24h             | SHAP Importance: 0.0000
+  15. device                    | SHAP Importance: 0.0000
+
+3. PREDICTION DISTRIBUTION
+----------------------------------------
+Mean Fraud Probability: 0.7919
+Median Fraud Probability: 0.7908
+Std Fraud Probability: 0.0076
+Min Fraud Probability: 0.7908
+Max Fraud Probability: 0.8450
+
+4. ERROR ANALYSIS
+----------------------------------------
+False Negatives (Missed Fraud): 0
+False Positives (False Alarms): 9800
+Total Errors: 9800
+
+5. RECOMMENDATIONS
+----------------------------------------
+• Review top SHAP features for feature engineering improvements
+• Investigate false negatives for patterns the model misses
+• Use SHAP explanations in fraud analyst workflow
+• Monitor feature distributions for drift over time
+
+================================================================================
+END OF REPORT
+================================================================================
