@@ -28,8 +28,3 @@ AI-powered fraud detection using **XGBoost**, **SHAP**, **Autoencoders**, and **
 
 ---
 
-## 🚀 How to Run
-
-### 1. Install
-```bash
-pip install -r requirements.txt
